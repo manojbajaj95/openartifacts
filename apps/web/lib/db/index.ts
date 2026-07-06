@@ -13,7 +13,7 @@ function databaseUrl(): string {
 }
 
 function usesPooler(url: string): boolean {
-  return url.includes("6543") || url.includes("pgbouncer=true");
+  return url.includes("6543") || url.includes("pgbouncer=true") || url.includes("pooler.supabase.com");
 }
 
 function getDb() {

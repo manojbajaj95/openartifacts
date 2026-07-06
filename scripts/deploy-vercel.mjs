@@ -26,13 +26,9 @@ function loadEnv(path) {
 
 function poolerUrl(direct) {
   const url = new URL(direct.replace(/^postgres:/, "postgresql:"));
-  const ref = url.hostname.match(/^db\.(.+)\.supabase\.co$/)?.[1];
-  if (!ref || url.port === "6543") return direct;
-
-  const region = process.env.SUPABASE_REGION ?? "us-west-1";
-  const password = encodeURIComponent(decodeURIComponent(url.password));
-  const user = `postgres.${ref}`;
-  return `postgresql://${user}:${password}@aws-0-${region}.pooler.supabase.com:6543/postgres?pgbouncer=true`;
+  // Supabase: use direct connection unless a pooler URL is explicitly provided.
+  if (url.port === "6543" || direct.includes("pooler.supabase.com")) return direct;
+  return direct;
 }
 
 const env = loadEnv(envPath);
