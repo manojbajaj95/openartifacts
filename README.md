@@ -146,14 +146,20 @@ Uploads are capped at 10 MB by default (`OA_MAX_UPLOAD_BYTES` to change on self-
 | `GET` | `/api/artifacts/:id/content` | Raw file bytes (`?download=1` forces attachment) |
 | `GET/POST` | `/api/artifacts/:id/feedback` | List or add comments |
 
-## Agent skill
+## Install for agents
 
-[`skills/openartifacts/`](./skills/openartifacts/) ships an [Agent Skill](https://agentskills.io) that teaches coding agents (Cursor, Claude Code, etc.) the share-for-feedback workflow: upload a file, hand back the review link, and later fetch reviewer comments via the feedback API.
+Teach your coding agent (Cursor, Claude Code, Codex, …) the share-for-feedback workflow with one command:
 
-- [`SKILL.md`](./skills/openartifacts/SKILL.md) — the core workflow agents follow
+```bash
+npx skills add manojbajaj95/openartifacts -g -y -a universal
+```
+
+Or tell your agent to read **[INSTALL_FOR_AGENTS.md](./INSTALL_FOR_AGENTS.md)** and install it itself.
+
+The skill lives in [`skills/openartifacts/`](./skills/openartifacts/):
+
+- [`SKILL.md`](./skills/openartifacts/SKILL.md) — the core workflow agents follow: upload, hand back the review link, fetch reviewer comments
 - [`REFERENCE.md`](./skills/openartifacts/REFERENCE.md) — CLI config resolution, self-hosted setup, and full HTTP API
-
-Install it by copying the folder into your agent's skills directory (e.g. `~/.cursor/skills/` or `.claude/skills/`).
 
 ## Monorepo scripts
 

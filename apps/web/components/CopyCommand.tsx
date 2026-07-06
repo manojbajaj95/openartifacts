@@ -4,7 +4,13 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-export function CopyCommand({ command }: { command: string }) {
+export function CopyCommand({
+  command,
+  label = "Quick start",
+}: {
+  command: string;
+  label?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -21,7 +27,7 @@ export function CopyCommand({ command }: { command: string }) {
     <div className="command-block overflow-hidden">
       <div className="border-border flex items-center justify-between gap-3 border-b px-3.5 py-2">
         <span className="text-muted-foreground text-[0.6875rem] font-medium tracking-[0.1em] uppercase">
-          Quick start
+          {label}
         </span>
         <Button
           type="button"

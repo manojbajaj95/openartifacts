@@ -1,8 +1,10 @@
 import { CopyCommand } from "@/components/CopyCommand";
-import { SiteFooter } from "@/components/SiteFooter";
+import { GITHUB_URL, SiteFooter } from "@/components/SiteFooter";
 import { UploadArtifact } from "@/components/UploadArtifact";
 
 const COMMAND = "npx openartifacts@latest upload ./design.md";
+const AGENT_COMMAND = "npx skills add manojbajaj95/openartifacts -g -y -a universal";
+const AGENT_INSTALL_URL = `${GITHUB_URL}/blob/main/INSTALL_FOR_AGENTS.md`;
 
 export default function HomePage() {
   return (
@@ -24,6 +26,29 @@ export default function HomePage() {
             <p className="text-muted-foreground text-center text-sm">or from the terminal</p>
             <CopyCommand command={COMMAND} />
           </div>
+        </section>
+
+        <section className="border-border mt-12 space-y-4 border-t pt-8">
+          <div className="space-y-1.5">
+            <h2 className="text-[0.9375rem] font-semibold">Install for agents</h2>
+            <p className="text-muted-foreground text-sm leading-relaxed text-pretty">
+              Give Cursor, Claude Code, or any skills-aware agent the share-for-feedback
+              workflow — upload, hand back the review link, collect comments.
+            </p>
+          </div>
+          <CopyCommand command={AGENT_COMMAND} label="Agent skill" />
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            Or point your agent at{" "}
+            <a
+              href={AGENT_INSTALL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--link)] transition-colors duration-150 hover:underline"
+            >
+              INSTALL_FOR_AGENTS.md
+            </a>{" "}
+            and it will set itself up.
+          </p>
         </section>
       </main>
 
