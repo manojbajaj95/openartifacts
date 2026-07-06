@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mbajaj/openartifacts.git",
+    "url": "git+https://github.com/manojbajaj95/openartifacts.git",
     "directory": "packages/cli"
   },
   "keywords": ["cli", "upload", "share", "artifacts", "markdown", "mermaid"],
