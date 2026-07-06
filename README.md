@@ -124,21 +124,36 @@ Set `DATABASE_URL` (Supabase Postgres works too — use the connection string fr
 
 | Extension / type | Rendered as |
 |------------------|-------------|
-| `.md` | Markdown (GFM) with fenced mermaid blocks |
+| `.md`, `.markdown` | Markdown (GFM) with fenced mermaid blocks |
 | `.mmd`, `.mermaid` | Mermaid diagram |
 | `.html`, `.htm` | Sandboxed iframe |
-| Images | Inline image |
-| `.txt`, other text | Monospace pre block |
+| Images (`.png`, `.jpg`, `.gif`, `.webp`, `.svg`) | Inline image |
+| Code (`.ts`, `.py`, `.go`, `.sql`, `Dockerfile`, …) | Syntax highlighting with line numbers |
+| `.patch`, `.diff` | Rendered diff |
+| `.json` | Collapsible JSON tree |
+| `.jsonl` | Structured trace viewer |
+| `.txt`, `.log`, `.csv` | Plain text; ANSI logs render as terminal output |
 | Other | Download link |
+
+Uploads are capped at 10 MB by default (`OA_MAX_UPLOAD_BYTES` to change on self-hosted servers).
 
 ## API
 
 | Method | Path | Description |
 |--------|------|-------------|
 | `POST` | `/api/uploads` | Multipart upload (`file` field) |
-| `GET` | `/api/artifacts/:id` | Metadata + presigned content URL |
-| `GET` | `/api/artifacts/:id/content` | Proxy file bytes for viewer |
+| `GET` | `/api/artifacts/:id` | Metadata + feedback list |
+| `GET` | `/api/artifacts/:id/content` | Raw file bytes (`?download=1` forces attachment) |
 | `GET/POST` | `/api/artifacts/:id/feedback` | List or add comments |
+
+## Agent skill
+
+[`skills/openartifacts/`](./skills/openartifacts/) ships an [Agent Skill](https://agentskills.io) that teaches coding agents (Cursor, Claude Code, etc.) the share-for-feedback workflow: upload a file, hand back the review link, and later fetch reviewer comments via the feedback API.
+
+- [`SKILL.md`](./skills/openartifacts/SKILL.md) — the core workflow agents follow
+- [`REFERENCE.md`](./skills/openartifacts/REFERENCE.md) — CLI config resolution, self-hosted setup, and full HTTP API
+
+Install it by copying the folder into your agent's skills directory (e.g. `~/.cursor/skills/` or `.claude/skills/`).
 
 ## Monorepo scripts
 
