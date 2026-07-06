@@ -1,6 +1,6 @@
 {
   "name": "openartifacts",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Upload and share artifacts — markdown, images, HTML, mermaid, and more",
   "type": "module",
   "license": "MIT",
@@ -9,7 +9,14 @@
     "url": "git+https://github.com/manojbajaj95/openartifacts.git",
     "directory": "packages/cli"
   },
-  "keywords": ["cli", "upload", "share", "artifacts", "markdown", "mermaid"],
+  "keywords": [
+    "cli",
+    "upload",
+    "share",
+    "artifacts",
+    "markdown",
+    "mermaid"
+  ],
   "engines": {
     "node": ">=20"
   },
