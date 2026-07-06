@@ -3,6 +3,8 @@
 import type { Artifact, ArtifactKind } from "@openartifacts/shared";
 import { kindFromFilename } from "@openartifacts/shared";
 import { useEffect, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MarkdownView } from "./MarkdownView";
 import { MermaidView } from "./MermaidView";
 
@@ -46,17 +48,28 @@ export function ArtifactRenderer({
       <img
         src={contentPath}
         alt={artifact.filename}
-        style={{ maxWidth: "100%", height: "auto", display: "block", margin: "0 auto" }}
+        className="artifact-image"
       />
     );
   }
 
   if (error) {
-    return <p style={{ color: "var(--danger)" }}>{error}</p>;
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
   }
 
   if (text === null) {
-    return <p style={{ color: "var(--muted)" }}>Loading...</p>;
+    return (
+      <div className="space-y-2.5" aria-busy="true" aria-label="Loading artifact">
+        <Skeleton className="h-3.5 w-2/5" />
+        <Skeleton className="h-3.5 w-full" />
+        <Skeleton className="h-3.5 w-11/12" />
+        <Skeleton className="mt-4 h-28 w-full rounded-md" />
+      </div>
+    );
   }
 
   switch (kind) {
@@ -70,16 +83,22 @@ export function ArtifactRenderer({
           title={artifact.filename}
           sandbox="allow-scripts"
           srcDoc={text}
-          style={{ width: "100%", minHeight: "480px", border: "0", borderRadius: "8px", background: "white" }}
+          className="artifact-html-frame"
         />
       );
     case "text":
-      return <pre style={{ margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{text}</pre>;
+      return (
+        <pre className="artifact-inset text-artifact p-4">{text}</pre>
+      );
     default:
       return (
-        <div>
-          <p style={{ color: "var(--muted)" }}>Binary file — download to view.</p>
-          <a href={contentPath} download={artifact.filename}>
+        <div className="space-y-2">
+          <p className="text-muted-foreground text-sm">Binary file — download to view.</p>
+          <a
+            href={contentPath}
+            download={artifact.filename}
+            className="text-[var(--link)] text-sm underline-offset-4 hover:underline"
+          >
             Download {artifact.filename}
           </a>
         </div>
