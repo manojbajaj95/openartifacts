@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export default function ArtifactNotFound() {
   return (
-    <>
-      <SiteHeader />
-      <main className="mx-auto grid min-h-[calc(100vh-2.75rem)] max-w-4xl place-items-center px-5 py-16">
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col px-5 py-16">
+      <div className="flex flex-1 items-center justify-center">
         <section className="surface-panel max-w-md p-6 text-center">
           <p className="text-muted-foreground mb-2 font-mono text-xs">404</p>
           <h1 className="text-xl font-semibold">Artifact not found</h1>
@@ -19,7 +18,8 @@ export default function ArtifactNotFound() {
             Upload an artifact
           </Link>
         </section>
-      </main>
-    </>
+      </div>
+      <SiteFooter className="mt-20" />
+    </main>
   );
 }

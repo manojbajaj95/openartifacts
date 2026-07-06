@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { themeInitScript } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -23,7 +24,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn("dark font-sans", plexSans.variable, plexMono.variable)}>
+    <html
+      lang="en"
+      className={cn("font-sans", plexSans.variable, plexMono.variable)}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body>
         <TooltipProvider>{children}</TooltipProvider>
       </body>

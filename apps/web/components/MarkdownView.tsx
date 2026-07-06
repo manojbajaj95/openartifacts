@@ -1,11 +1,13 @@
 "use client";
 
-import { MessageResponse } from "@/components/ai-elements/message";
+import { SandboxedRenderView } from "@/components/SandboxedRenderView";
 
-export function MarkdownView({ source }: { source: string }) {
-  return (
-    <article className="artifact-markdown">
-      <MessageResponse parseIncompleteMarkdown={false}>{source}</MessageResponse>
-    </article>
-  );
+export function MarkdownView({
+  artifactId,
+  title,
+}: {
+  artifactId: string;
+  title: string;
+}) {
+  return <SandboxedRenderView artifactId={artifactId} title={title} />;
 }

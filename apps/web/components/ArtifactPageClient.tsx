@@ -3,27 +3,39 @@
 import type { Artifact, Feedback } from "@openartifacts/shared";
 import { effectiveArtifactKind } from "@openartifacts/shared";
 import {
-  ArrowLeftIcon,
   CheckIcon,
   CodeIcon,
   CopyIcon,
   DownloadIcon,
   ExternalLinkIcon,
-  FileTextIcon,
   MoreHorizontalIcon,
   Share2Icon,
 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { ArtifactRenderer } from "./ArtifactRenderer";
+import { SiteFooter } from "@/components/SiteFooter";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
-const GITHUB_URL = "https://github.com/manojbajaj95/openartifacts";
-const TEXT_KINDS = new Set(["markdown", "mermaid", "html", "code", "text"]);
+const TEXT_KINDS = new Set([
+  "markdown",
+  "mermaid",
+  "html",
+  "code",
+  "text",
+  "json",
+  "trace",
+  "diff",
+  "terminal",
+]);
 
 export function ArtifactPageClient({
   artifact,
@@ -98,7 +110,7 @@ export function ArtifactPageClient({
   }
 
   return (
-    <>
+    <div className="flex min-h-dvh flex-col">
       <ArtifactToolbar
         artifact={artifact}
         contentPath={contentPath}
@@ -107,14 +119,16 @@ export function ArtifactPageClient({
         onCopy={copyLink}
         onShare={shareArtifact}
       />
-      <main className="mx-auto max-w-6xl px-4 py-6 pb-16 sm:px-5">
-        <div className={`artifact-frame artifact-frame--${kind} artifact-frame--hero mb-10`}>
+
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-6 sm:px-5">
+        <div className={`artifact-frame artifact-frame--${kind} artifact-frame--hero`}>
           <ArtifactRenderer artifact={artifact} contentPath={contentPath} />
         </div>
 
-        <Separator className="mx-auto mb-8 max-w-4xl opacity-60" />
-
-        <section aria-labelledby="feedback-heading" className="mx-auto max-w-4xl">
+        <section
+          aria-labelledby="feedback-heading"
+          className="mx-auto mt-10 w-full max-w-4xl border-t border-border pt-8"
+        >
           <div className="mb-5 flex items-baseline justify-between gap-4">
             <h2 id="feedback-heading" className="text-sm font-medium">
               Feedback
@@ -127,21 +141,33 @@ export function ArtifactPageClient({
           </div>
 
           <form onSubmit={submitFeedback} className="mb-8 grid max-w-xl gap-3">
-            <Input
-              placeholder="Your name (optional)"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              autoComplete="name"
-              maxLength={80}
-            />
-            <Textarea
-              required
-              placeholder="Leave a comment on this artifact…"
-              rows={3}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              maxLength={4000}
-            />
+            <div className="grid gap-1.5">
+              <label htmlFor="feedback-author" className="sr-only">
+                Your name (optional)
+              </label>
+              <Input
+                id="feedback-author"
+                placeholder="Your name (optional)"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                autoComplete="name"
+                maxLength={80}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <label htmlFor="feedback-body" className="sr-only">
+                Comment
+              </label>
+              <Textarea
+                id="feedback-body"
+                required
+                placeholder="Leave a comment on this artifact…"
+                rows={3}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                maxLength={4000}
+              />
+            </div>
             {error ? (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
@@ -153,7 +179,7 @@ export function ArtifactPageClient({
               </Button>
               {posted ? (
                 <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
-                  <CheckIcon className="size-3.5" />
+                  <CheckIcon className="size-3.5" aria-hidden />
                   Posted
                 </span>
               ) : null}
@@ -184,7 +210,9 @@ export function ArtifactPageClient({
           )}
         </section>
       </main>
-    </>
+
+      <SiteFooter className="border-border sticky bottom-0 shrink-0 border-t bg-background px-5 py-4 text-center" />
+    </div>
   );
 }
 
@@ -206,23 +234,21 @@ function ArtifactToolbar({
   const rawPath = `${contentPath}?download=1`;
 
   return (
-    <header className="artifact-toolbar">
+    <header className="artifact-toolbar shrink-0">
       <div className="artifact-toolbar__inner">
-        <Link href="/" className="artifact-toolbar__brand" aria-label="Back to OpenArtifacts home">
-          <ArrowLeftIcon className="size-3.5" />
-          <span>OpenArtifacts</span>
-        </Link>
         <div className="artifact-toolbar__title">
-          <span className="truncate" title={artifact.filename}>
+          <span className="truncate font-medium text-foreground" title={artifact.filename}>
             {artifact.filename}
           </span>
           <span aria-hidden className="artifact-toolbar__dot">
             ·
           </span>
           <span className="artifact-kind-badge">{kind}</span>
-          <span className="text-muted-foreground hidden sm:inline">{formatBytes(artifact.size)}</span>
+          <span className="text-muted-foreground hidden sm:inline tabular-nums">
+            {formatBytes(artifact.size)}
+          </span>
           <time
-            className="text-muted-foreground hidden md:inline"
+            className="text-muted-foreground hidden md:inline tabular-nums"
             dateTime={artifact.createdAt}
             suppressHydrationWarning
           >
@@ -230,46 +256,53 @@ function ArtifactToolbar({
           </time>
         </div>
         <div className="artifact-toolbar__actions">
-          <Button type="button" variant="outline" size="icon-sm" onClick={onCopy} aria-label="Copy artifact link">
-            {copied ? <CheckIcon /> : <CopyIcon />}
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            onClick={onCopy}
+            aria-label={copied ? "Link copied" : "Copy artifact link"}
+          >
+            {copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
           </Button>
-          <Button type="button" variant="outline" size="icon-sm" onClick={onShare} aria-label="Share artifact">
-            <Share2Icon />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            onClick={onShare}
+            aria-label="Share artifact"
+          >
+            <Share2Icon aria-hidden />
           </Button>
-          <details className="artifact-overflow">
-            <summary aria-label="More artifact actions">
-              <MoreHorizontalIcon className="size-3.5" />
-            </summary>
-            <div className="artifact-overflow__menu">
-              <a href={rawPath} download={artifact.filename}>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button type="button" variant="outline" size="icon-sm" aria-label="More artifact actions" />
+              }
+            >
+              <MoreHorizontalIcon aria-hidden />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-40">
+              <DropdownMenuItem render={<a href={rawPath} download={artifact.filename} />}>
                 <DownloadIcon />
                 Download raw
-              </a>
-              <a href={contentPath} target="_blank" rel="noopener noreferrer">
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<a href={contentPath} target="_blank" rel="noopener noreferrer" />}
+              >
                 <ExternalLinkIcon />
                 Open raw
-              </a>
+              </DropdownMenuItem>
               {TEXT_KINDS.has(kind) ? (
-                <a href={contentPath} target="_blank" rel="noopener noreferrer">
+                <DropdownMenuItem
+                  render={<a href={contentPath} target="_blank" rel="noopener noreferrer" />}
+                >
                   <CodeIcon />
                   View source
-                </a>
+                </DropdownMenuItem>
               ) : null}
-              <hr />
-              <Link href="/about">
-                <FileTextIcon />
-                About
-              </Link>
-              <Link href="/api">
-                <FileTextIcon />
-                API
-              </Link>
-              <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-                <ExternalLinkIcon />
-                GitHub
-              </a>
-            </div>
-          </details>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

@@ -1,4 +1,4 @@
-import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export function SitePage({
   children,
@@ -8,9 +8,9 @@ export function SitePage({
   className?: string;
 }) {
   return (
-    <>
-      <SiteHeader />
-      <main className={className ?? "mx-auto max-w-3xl px-5 py-12 pb-20"}>{children}</main>
-    </>
+    <main className={className ?? "mx-auto max-w-3xl px-5 py-12 pb-20"}>
+      {children}
+      <SiteFooter className="mt-20" />
+    </main>
   );
 }

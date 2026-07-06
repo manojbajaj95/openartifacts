@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { nanoid } from "nanoid";
-import { kindFromContentType, kindFromFilename, resolveContentType } from "@openartifacts/shared";
+import { kindFromContentType, kindFromFilename, refineKindFromText, resolveContentType } from "@openartifacts/shared";
 import { insertArtifact } from "@/lib/db";
 import { artifactKey, putObject } from "@/lib/s3";
 import { toArtifact } from "@/lib/serialize";
@@ -34,7 +34,12 @@ export async function POST(request: Request) {
     const filename = file.name || "upload";
     const contentType = resolveContentType(filename, file.type);
     const filenameKind = kindFromFilename(filename);
-    const kind = filenameKind === "binary" ? kindFromContentType(contentType) : filenameKind;
+    const contentKind = kindFromContentType(contentType);
+    let kind = filenameKind === "binary" ? contentKind : filenameKind;
+    if (kind !== "binary" && kind !== "image") {
+      const preview = buffer.toString("utf8", 0, Math.min(buffer.length, 65536));
+      kind = refineKindFromText(kind, filename, preview);
+    }
     const sha256 = createHash("sha256").update(buffer).digest("hex");
     const key = artifactKey(id);
 

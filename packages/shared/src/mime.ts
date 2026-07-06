@@ -10,6 +10,9 @@ const EXT_CONTENT_TYPE: Record<string, string> = {
   ".txt": "text/plain",
   ".log": "text/plain",
   ".csv": "text/csv",
+  ".patch": "text/x-diff",
+  ".diff": "text/x-diff",
+  ".jsonl": "application/x-ndjson",
   ".ts": "text/typescript",
   ".tsx": "text/tsx",
   ".js": "text/javascript",
@@ -65,7 +68,6 @@ const CODE_EXTENSIONS = new Set([
   ".sql",
   ".css",
   ".scss",
-  ".json",
   ".yaml",
   ".yml",
   ".toml",
@@ -107,6 +109,8 @@ const EXT_LANGUAGE: Record<string, string> = {
   ".log": "log",
 };
 
+const ANSI_PATTERN = /\u001b\[[0-9:;]*[ -/]*[@-~]/;
+
 function normalizedFilename(filename: string): string {
   return filename.trim().toLowerCase();
 }
@@ -141,14 +145,20 @@ export function resolveContentType(filename: string, declaredType?: string): str
   return declared;
 }
 
+export function hasAnsiSequences(text: string): boolean {
+  return ANSI_PATTERN.test(text);
+}
+
 export function kindFromContentType(contentType: string): ArtifactKind {
   const ct = contentType.split(";")[0].trim().toLowerCase();
   if (ct.startsWith("image/")) return "image";
   if (ct === "text/html") return "html";
   if (ct === "text/markdown") return "markdown";
   if (ct === "text/vnd.mermaid") return "mermaid";
+  if (ct === "text/x-diff") return "diff";
+  if (ct === "application/json") return "json";
+  if (ct === "application/x-ndjson") return "trace";
   if (
-    ct === "application/json" ||
     ct === "application/xml" ||
     ct.includes("javascript") ||
     ct.includes("typescript") ||
@@ -175,13 +185,61 @@ export function kindFromContentType(contentType: string): ArtifactKind {
 
 export function kindFromFilename(filename: string): ArtifactKind {
   const ext = fileExtension(filename);
+  if (ext === ".patch" || ext === ".diff") return "diff";
+  if (ext === ".jsonl") return "trace";
+  if (ext === ".json") return "json";
   if (CODE_EXTENSIONS.has(ext)) return "code";
   return kindFromContentType(contentTypeFromFilename(filename));
 }
 
-/** Stored kind with filename fallback for legacy uploads misclassified as binary. */
+/** Refine kind using file contents (ANSI logs, trace-shaped JSON). */
+export function refineKindFromText(
+  kind: ArtifactKind,
+  filename: string,
+  text: string,
+): ArtifactKind {
+  const ext = fileExtension(filename);
+  if (ext === ".jsonl") return "trace";
+  if (kind === "text" && hasAnsiSequences(text)) return "terminal";
+  if (kind === "json" && ext !== ".json") return kind;
+  if (kind === "json" && looksLikeTraceDocument(text)) return "trace";
+  return kind;
+}
+
+function looksLikeTraceDocument(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (!Array.isArray(parsed) || parsed.length === 0) return false;
+    return parsed.every(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        typeof (item as { label?: unknown }).label === "string",
+    );
+  } catch {
+    return trimmed.split("\n").some((line) => {
+      const row = line.trim();
+      if (!row) return false;
+      try {
+        const parsed = JSON.parse(row) as { label?: unknown };
+        return typeof parsed.label === "string";
+      } catch {
+        return false;
+      }
+    });
+  }
+}
+
+/** Stored kind with filename fallback for legacy uploads misclassified as binary or code. */
 export function effectiveArtifactKind(artifact: { kind: ArtifactKind; filename: string }): ArtifactKind {
-  if (artifact.kind !== "binary") return artifact.kind;
   const fromName = kindFromFilename(artifact.filename);
-  return fromName === "binary" ? artifact.kind : fromName;
+  if (artifact.kind === "binary") {
+    return fromName === "binary" ? artifact.kind : fromName;
+  }
+  if (fromName === "json" || fromName === "trace" || fromName === "diff") {
+    return fromName;
+  }
+  return artifact.kind;
 }
