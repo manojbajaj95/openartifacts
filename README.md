@@ -74,7 +74,7 @@ openartifacts init
 
 Environment overrides:
 
-- `OA_SERVER_URL` — API base URL (default: `https://openartifacts.dev`)
+- `OA_SERVER_URL` — API base URL (default: `https://oartifacts.vercel.app`)
 - `OA_VIEWER_URL` — printed link base (default: same as server)
 
 ## Self-hosting

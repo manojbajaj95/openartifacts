@@ -8,7 +8,7 @@ const program = new Command();
 program
   .name("openartifacts")
   .description("Upload and share artifacts — markdown, images, HTML, mermaid, and more")
-  .version("0.1.0");
+  .version("0.1.1");
 
 program
   .command("upload")

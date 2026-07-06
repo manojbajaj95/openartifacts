@@ -1,9 +1,16 @@
 "use client";
 
-import type { Artifact } from "@openartifacts/shared";
+import type { Artifact, ArtifactKind } from "@openartifacts/shared";
+import { kindFromFilename } from "@openartifacts/shared";
 import { useEffect, useState } from "react";
 import { MarkdownView } from "./MarkdownView";
 import { MermaidView } from "./MermaidView";
+
+function effectiveKind(artifact: Artifact): ArtifactKind {
+  if (artifact.kind !== "binary") return artifact.kind;
+  const fromName = kindFromFilename(artifact.filename);
+  return fromName === "binary" ? artifact.kind : fromName;
+}
 
 export function ArtifactRenderer({
   artifact,
@@ -15,8 +22,10 @@ export function ArtifactRenderer({
   const [text, setText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const kind = effectiveKind(artifact);
+
   useEffect(() => {
-    if (artifact.kind === "image") return;
+    if (kind === "image") return;
     let cancelled = false;
     (async () => {
       try {
@@ -30,9 +39,9 @@ export function ArtifactRenderer({
     return () => {
       cancelled = true;
     };
-  }, [artifact.kind, contentPath]);
+  }, [kind, contentPath]);
 
-  if (artifact.kind === "image") {
+  if (kind === "image") {
     return (
       <img
         src={contentPath}
@@ -50,7 +59,7 @@ export function ArtifactRenderer({
     return <p style={{ color: "var(--muted)" }}>Loading...</p>;
   }
 
-  switch (artifact.kind) {
+  switch (kind) {
     case "markdown":
       return <MarkdownView source={text} />;
     case "mermaid":

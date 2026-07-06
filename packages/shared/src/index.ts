@@ -1,5 +1,5 @@
-export const DEFAULT_SERVER_URL = "https://openartifacts.dev";
-export const DEFAULT_VIEWER_URL = "https://openartifacts.dev";
+export const DEFAULT_SERVER_URL = "https://oartifacts.vercel.app";
+export const DEFAULT_VIEWER_URL = "https://oartifacts.vercel.app";
 
 export type ArtifactKind = "markdown" | "mermaid" | "html" | "image" | "text" | "binary";
 
@@ -31,4 +31,4 @@ export interface ArtifactDetailResponse {
   feedback: Feedback[];
 }
 
-export { contentTypeFromFilename, kindFromContentType } from "./mime.js";
+export { contentTypeFromFilename, kindFromContentType, kindFromFilename, resolveContentType } from "./mime.js";

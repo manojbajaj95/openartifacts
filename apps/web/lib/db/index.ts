@@ -25,11 +25,11 @@ function getDb() {
   if (!globalForDb.__oa_db) {
     const url = databaseUrl();
     const client = postgres(url, {
-      // Serverless: one connection per instance. Pooler handles concurrency.
       max: process.env.VERCEL ? 1 : 10,
       prepare: usesPooler(url) ? false : true,
       idle_timeout: 20,
       connect_timeout: 10,
+      ssl: "require",
     });
     globalForDb.__oa_pg = client;
     globalForDb.__oa_db = drizzle(client, { schema });
