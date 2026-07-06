@@ -8,6 +8,13 @@
       "when": 1783367399543,
       "tag": "0000_skinny_squirrel_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783369980000,
+      "tag": "0001_artifact_sha256",
+      "breakpoints": true
     }
   ]
 }

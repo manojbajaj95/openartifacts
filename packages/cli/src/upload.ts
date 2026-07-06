@@ -7,6 +7,7 @@ import { loadConfig } from "./config.js";
 export async function uploadFile(filePath: string, serverUrl?: string): Promise<UploadResponse> {
   const config = await loadConfig();
   const base = (serverUrl ?? config.serverUrl).replace(/\/$/, "");
+  const viewerBase = config.viewerUrl.replace(/\/$/, "");
   const info = await stat(filePath);
   if (!info.isFile()) {
     throw new Error(`Not a file: ${filePath}`);
@@ -29,5 +30,15 @@ export async function uploadFile(filePath: string, serverUrl?: string): Promise<
     throw new Error(`Upload failed (${res.status}): ${text}`);
   }
 
-  return (await res.json()) as UploadResponse;
+  const result = (await res.json()) as UploadResponse;
+  return {
+    ...result,
+    artifact: {
+      ...result.artifact,
+      viewUrl: `${viewerBase}/a/${result.artifact.id}`,
+    },
+    contentUrl: result.contentUrl.startsWith("http")
+      ? result.contentUrl
+      : `${base}${result.contentUrl}`,
+  };
 }

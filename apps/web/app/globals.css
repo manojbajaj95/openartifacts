@@ -184,10 +184,157 @@
   text-align: center;
 }
 
+.artifact-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+}
+
+.artifact-toolbar__inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 72rem;
+  min-height: 2.75rem;
+  margin-inline: auto;
+  padding: 0.35rem 1rem;
+}
+
+.artifact-toolbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: color-mix(in oklch, var(--foreground) 72%, var(--muted-foreground));
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.artifact-toolbar__brand:hover,
+.artifact-toolbar__brand:focus-visible {
+  color: var(--link);
+}
+
+.artifact-toolbar__title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.artifact-toolbar__dot {
+  color: color-mix(in oklch, var(--muted-foreground) 70%, transparent);
+}
+
+.artifact-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.artifact-kind-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.1rem 0.4rem;
+  background: var(--input);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+}
+
+.artifact-overflow {
+  position: relative;
+}
+
+.artifact-overflow summary {
+  display: inline-flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklch, var(--input) 30%, transparent);
+  cursor: pointer;
+  list-style: none;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.artifact-overflow summary::-webkit-details-marker {
+  display: none;
+}
+
+.artifact-overflow summary:hover,
+.artifact-overflow[open] summary {
+  background: var(--muted);
+}
+
+.artifact-overflow summary:focus-visible {
+  border-color: var(--ring);
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 40%, transparent);
+}
+
+.artifact-overflow__menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 50;
+  min-width: 12rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--popover);
+  padding: 0.35rem;
+}
+
+.artifact-overflow__menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.55rem;
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+.artifact-overflow__menu a:hover,
+.artifact-overflow__menu a:focus-visible {
+  background: var(--muted);
+  outline: none;
+}
+
+.artifact-overflow__menu svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.artifact-overflow__menu hr {
+  display: block;
+  height: 1px;
+  margin: 0.35rem;
+  border: 0;
+  background: var(--border);
+}
+
 .artifact-markdown {
   color: var(--foreground);
   font-size: 0.9375rem;
   line-height: 1.65;
+  max-width: 75ch;
+  margin-inline: auto;
 }
 
 .artifact-markdown :where(a) {
@@ -272,8 +419,12 @@
   margin: 1.25em 0;
 }
 
-.artifact-markdown :where(pre, table, .mermaid-view) {
-  max-width: none;
+.artifact-markdown :where(pre, table, .mermaid-view, [data-streamdown="code-block"], [data-streamdown="table-wrapper"]) {
+  position: relative;
+  left: 50%;
+  width: min(100vw - 2.5rem, 72rem);
+  max-width: min(100vw - 2.5rem, 72rem);
+  transform: translateX(-50%);
 }
 
 .artifact-markdown :where(pre) {
@@ -335,13 +486,64 @@
 
 .mermaid-view {
   display: flex;
+  min-height: 18rem;
+  align-items: center;
   justify-content: center;
-  padding: 0.5rem 0;
+  padding: 1rem 0;
 }
 
 .mermaid-view svg {
   max-width: 100%;
   height: auto;
+}
+
+.artifact-mermaid-error {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.artifact-code-view {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input);
+}
+
+.artifact-code-gutter {
+  display: grid;
+  align-content: start;
+  gap: 0;
+  min-width: 3rem;
+  padding: 0.875rem 0.6rem;
+  border-right: 1px solid color-mix(in oklch, var(--border) 75%, transparent);
+  color: color-mix(in oklch, var(--muted-foreground) 82%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  text-align: right;
+  user-select: none;
+}
+
+.artifact-code-gutter span {
+  min-height: 1.2rem;
+}
+
+.artifact-code-body {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.artifact-code-body [data-streamdown="code-block"] {
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.artifact-code-body pre {
+  margin: 0 !important;
 }
 
 .text-artifact {
@@ -359,8 +561,65 @@
   display: block;
   margin-inline: auto;
   max-width: 100%;
+  max-height: calc(100vh - 8rem);
   height: auto;
   border-radius: var(--radius-sm);
+}
+
+.artifact-image-stage {
+  display: grid;
+  min-height: 18rem;
+  place-items: center;
+}
+
+.artifact-image-button {
+  display: block;
+  max-width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: zoom-in;
+}
+
+.artifact-image-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.artifact-image-dialog {
+  max-width: min(92vw, 96rem);
+  max-height: 92vh;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--background);
+  padding: 0.75rem;
+}
+
+.artifact-image-dialog::backdrop {
+  background: color-mix(in oklch, var(--background) 76%, transparent);
+}
+
+.artifact-image-dialog form {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.artifact-image-dialog button {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input);
+  padding: 0.35rem 0.6rem;
+  color: var(--foreground);
+  font-size: 0.8125rem;
+}
+
+.artifact-image-dialog img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(92vh - 4rem);
+  height: auto;
 }
 
 .artifact-html-frame {
@@ -369,5 +628,153 @@
   min-height: 480px;
   border: 0;
   border-radius: var(--radius-sm);
-  background: #fff;
+  background: var(--input);
+}
+
+.artifact-frame--html {
+  padding: 0;
+  overflow: hidden;
+}
+
+.artifact-frame--html .artifact-html-frame {
+  border-radius: var(--radius-lg);
+}
+
+.artifact-frame--markdown {
+  padding-block: 2rem;
+}
+
+.artifact-frame--image,
+.artifact-frame--mermaid,
+.artifact-frame--binary {
+  display: grid;
+  place-items: center;
+}
+
+.artifact-empty-state {
+  display: grid;
+  place-items: center;
+  gap: 0.9rem;
+  max-width: 24rem;
+  margin-inline: auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.artifact-empty-state > svg {
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--muted-foreground);
+}
+
+.artifact-empty-state h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.artifact-empty-state p {
+  margin: 0.35rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.artifact-download-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2rem;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  padding: 0.35rem 0.75rem;
+  color: var(--primary-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.artifact-download-button:hover,
+.artifact-download-button:focus-visible {
+  border-color: color-mix(in oklch, var(--primary) 82%, var(--foreground));
+  background: color-mix(in oklch, var(--primary) 82%, var(--foreground));
+  outline: none;
+}
+
+.artifact-download-button:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 40%, transparent);
+}
+
+.artifact-download-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.artifact-skeleton,
+.artifact-skeleton-lines span {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklch, var(--muted) 78%, var(--foreground) 8%);
+}
+
+.artifact-skeleton::after,
+.artifact-skeleton-lines span::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--foreground) 12%, transparent), transparent);
+  animation: artifact-shimmer 1.4s ease-in-out infinite;
+  content: "";
+  transform: translateX(-100%);
+}
+
+.artifact-skeleton-lines {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.artifact-skeleton-lines span {
+  display: block;
+  height: 0.8rem;
+}
+
+.artifact-skeleton--diagram {
+  width: min(100%, 38rem);
+  height: 18rem;
+}
+
+.artifact-skeleton--frame {
+  width: 100%;
+  height: 30rem;
+}
+
+.artifact-skeleton--image {
+  width: min(100%, 42rem);
+  height: min(45vh, 28rem);
+}
+
+@keyframes artifact-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 640px) {
+  .artifact-toolbar__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .artifact-toolbar__title {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .artifact-toolbar__actions {
+    justify-self: end;
+  }
 }

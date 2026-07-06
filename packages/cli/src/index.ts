@@ -18,7 +18,10 @@ program
   .action(async (file: string, opts: { server?: string }) => {
     const result = await uploadFile(file, opts.server);
     const { artifact } = result;
-    process.stdout.write(`${artifact.viewUrl}\n`);
+    process.stdout.write(`Uploaded ${artifact.filename}\n`);
+    process.stdout.write(`kind: ${artifact.kind}\n`);
+    process.stdout.write(`size: ${formatBytes(artifact.size)}\n\n`);
+    process.stdout.write(`Share link:\n${artifact.viewUrl}\n`);
   });
 
 program
@@ -53,3 +56,9 @@ program
   });
 
 program.parse();
+
+function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}

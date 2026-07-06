@@ -185,7 +185,9 @@ Depth is tonal, not shadowed. Surfaces lift via `color-mix(in srgb, var(--surfac
 
 ### Navigation
 
-- Not present yet; when added, prefer text links in accent color without pill chrome.
+- Site pages (`/`, `/about`, `/api`) use the standard `SiteHeader`: compact wordmark, text links, and GitHub link in muted ink with accent hover.
+- Artifact pages (`/a/[id]`) use `ArtifactToolbar` instead of `SiteHeader`: sticky 44px chrome with back/wordmark, truncated filename, mono kind badge (8px radius), size, relative time, copy/share controls, and an overflow menu for raw/download/source plus secondary site links.
+- Toolbar controls follow the shared button vocabulary: flat border/tint, 8–10px radii, no pill chrome, visible focus rings, and disabled/unsupported states that keep the artifact content primary.
 
 ## 6. Do's and Don'ts
 

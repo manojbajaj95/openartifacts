@@ -106,7 +106,8 @@ export default function ApiPage() {
     "size": 4096,
     "createdAt": "2026-07-06T21:00:00.000Z",
     "viewUrl": "${base}/a/abc123xyz"
-  }
+  },
+  "contentUrl": "/api/artifacts/abc123xyz/content"
 }`}</CodeBlock>
           </div>
 
@@ -126,7 +127,7 @@ export default function ApiPage() {
             <p className="text-muted-foreground text-sm">Response</p>
             <CodeBlock>{`{
   "artifact": { ... },
-  "contentUrl": "https://...",
+  "contentUrl": "/api/artifacts/abc123xyz/content",
   "feedback": [ ... ]
 }`}</CodeBlock>
           </div>
@@ -138,7 +139,8 @@ export default function ApiPage() {
           method="GET"
         >
           <p className="text-muted-foreground text-[0.9375rem] leading-relaxed">
-            Returns the raw file bytes with the stored content type. Used by the viewer.
+            Returns the raw file bytes with the stored content type, immutable caching, and an ETag.
+            Add <code>?download=1</code> to force an attachment response.
           </p>
         </ApiSection>
 
