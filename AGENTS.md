@@ -1,5 +1,9 @@
 # Agent context
 
+## Sharing artifacts
+
+When the user wants to share a file with a person or team for review, read **[skills/openartifacts/SKILL.md](skills/openartifacts/SKILL.md)** and upload via `npx openartifacts@latest upload <file>`.
+
 ## Design Context
 
 Impeccable design context for the web app lives in **`apps/web/`**:

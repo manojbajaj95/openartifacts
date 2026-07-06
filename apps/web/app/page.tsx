@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { CopyCommand } from "@/components/CopyCommand";
 import { SiteHeader } from "@/components/SiteHeader";
+import { UploadArtifact } from "@/components/UploadArtifact";
 
 const COMMAND = "npx openartifacts@latest upload ./design.md";
 
@@ -7,37 +9,47 @@ export default function HomePage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-2xl px-5 py-12 pb-20">
+      <main className="mx-auto flex max-w-2xl flex-col px-5 py-16 sm:py-24">
         <section className="space-y-8">
-          <div className="space-y-4">
-            <p className="text-[var(--link)] text-[0.6875rem] font-medium tracking-[0.1em] uppercase">
-              OpenArtifacts
-            </p>
-            <h1 className="text-[2rem] leading-[1.12] font-semibold tracking-[-0.02em] text-balance sm:text-[2.5rem]">
+          <div className="space-y-3">
+            <h1 className="text-[2rem] leading-[1.12] font-semibold tracking-[-0.02em] text-balance sm:text-[2.25rem]">
               Share artifacts. Get feedback.
             </h1>
-            <p className="text-muted-foreground max-w-[38rem] text-[1.0625rem] leading-relaxed text-pretty">
-              Upload markdown, images, HTML, mermaid diagrams, and more. One CLI command, one
-              link.
+            <p className="text-muted-foreground text-[1rem] leading-relaxed text-pretty">
+              Markdown, mermaid, HTML, images, and text — one link, rendered in the browser.
             </p>
           </div>
 
-          <CopyCommand command={COMMAND} />
+          <UploadArtifact />
 
-          <div className="space-y-3 border-border/60 border-t pt-6">
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Supports{" "}
-              <span className="text-foreground/90 font-mono text-[0.8125rem]">.md</span>,{" "}
-              <span className="text-foreground/90 font-mono text-[0.8125rem]">.mmd</span>,{" "}
-              <span className="text-foreground/90 font-mono text-[0.8125rem]">.html</span>, images,
-              and plain text.
-            </p>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Self-host the Next.js app or point the CLI at the default server. Storage is
-              S3-compatible — Supabase, MinIO, or AWS.
-            </p>
+          <div className="space-y-3">
+            <p className="text-muted-foreground text-center text-sm">or from the terminal</p>
+            <CopyCommand command={COMMAND} />
           </div>
         </section>
+
+        <footer className="text-muted-foreground mt-20 text-xs">
+          <Link href="/about" className="text-[var(--link)] hover:underline">
+            About
+          </Link>
+          <span className="mx-2 opacity-40" aria-hidden>
+            ·
+          </span>
+          <Link href="/api" className="text-[var(--link)] hover:underline">
+            API
+          </Link>
+          <span className="mx-2 opacity-40" aria-hidden>
+            ·
+          </span>
+          <a
+            href="https://github.com/manojbajaj95/openartifacts"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[var(--link)] hover:underline"
+          >
+            GitHub
+          </a>
+        </footer>
       </main>
     </>
   );
