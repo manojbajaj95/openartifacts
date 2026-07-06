@@ -100,13 +100,13 @@ export function ArtifactRenderer({
     case "code":
       return <CodeView filename={artifact.filename} source={text} />;
     case "text":
-      return <TextView source={text} />;
+      return <TextView filename={artifact.filename} source={text} />;
     case "json":
       return <JsonView source={text} />;
     case "trace":
       return <TraceView source={text} title={artifact.filename} />;
     default:
-      return <TextView source={text} />;
+      return <TextView filename={artifact.filename} source={text} />;
   }
 }
 

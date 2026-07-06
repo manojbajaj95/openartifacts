@@ -1,5 +1,6 @@
 "use client";
 
+import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   applyTheme,
@@ -15,7 +16,19 @@ const OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: "system", label: "System" },
 ];
 
-export function ThemeSwitcher({ className }: { className?: string }) {
+const TOOLBAR_ICONS = {
+  dark: MoonIcon,
+  light: SunIcon,
+  system: MonitorIcon,
+} as const;
+
+export function ThemeSwitcher({
+  className,
+  variant = "footer",
+}: {
+  className?: string;
+  variant?: "footer" | "toolbar";
+}) {
   const [preference, setPreference] = useState<ThemePreference>("system");
 
   useEffect(() => {
@@ -34,6 +47,33 @@ export function ThemeSwitcher({ className }: { className?: string }) {
   function select(next: ThemePreference) {
     setPreference(next);
     setStoredTheme(next);
+  }
+
+  if (variant === "toolbar") {
+    return (
+      <fieldset className={cn("artifact-theme-toggle", className)}>
+        <legend className="sr-only">Theme</legend>
+        {OPTIONS.map((option) => {
+          const Icon = TOOLBAR_ICONS[option.value];
+          return (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => select(option.value)}
+              aria-pressed={preference === option.value}
+              aria-label={`${option.label} theme`}
+              title={`${option.label} theme`}
+              className={cn(
+                "artifact-theme-toggle__button",
+                preference === option.value && "artifact-theme-toggle__button--active",
+              )}
+            >
+              <Icon aria-hidden />
+            </button>
+          );
+        })}
+      </fieldset>
+    );
   }
 
   return (

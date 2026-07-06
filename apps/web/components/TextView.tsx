@@ -4,14 +4,16 @@ import { useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function TextView({ source }: { source: string }) {
+export function TextView({ filename, source }: { filename: string; source: string }) {
   const lines = source.split("\n");
   const lineNumbers = Array.from({ length: Math.max(1, lines.length) }, (_, index) => index + 1);
 
   return (
     <div className="artifact-text-view">
       <div className="artifact-code-head">
-        <span className="artifact-code-filename">Plain text</span>
+        <span className="artifact-code-filename" title={filename}>
+          {filename}
+        </span>
         <CopySourceButton source={source} />
       </div>
       <div className="artifact-code-view artifact-code-view--text">

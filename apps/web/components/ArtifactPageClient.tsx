@@ -12,6 +12,7 @@ import {
   Share2Icon,
 } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 import { ArtifactRenderer } from "./ArtifactRenderer";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -24,6 +25,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+
+const SELF_FRAMED_KINDS = new Set(["text", "code", "json", "trace"]);
 
 const TEXT_KINDS = new Set([
   "markdown",
@@ -120,27 +123,26 @@ export function ArtifactPageClient({
         onShare={shareArtifact}
       />
 
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-6 sm:px-5">
-        <div className={`artifact-frame artifact-frame--${kind} artifact-frame--hero`}>
+      <main className="artifact-page-main">
+        <div
+          className={`artifact-frame artifact-frame--${kind}${SELF_FRAMED_KINDS.has(kind) ? "" : " artifact-frame--hero"}`}
+        >
           <ArtifactRenderer artifact={artifact} contentPath={contentPath} />
         </div>
 
-        <section
-          aria-labelledby="feedback-heading"
-          className="mx-auto mt-10 w-full max-w-4xl border-t border-border pt-8"
-        >
-          <div className="mb-5 flex items-baseline justify-between gap-4">
-            <h2 id="feedback-heading" className="text-sm font-medium">
+        <section aria-labelledby="feedback-heading" className="feedback-section">
+          <div className="feedback-section__head">
+            <h2 id="feedback-heading" className="feedback-section__title">
               Feedback
             </h2>
             {feedback.length > 0 ? (
-              <span className="text-muted-foreground text-xs tabular-nums">
+              <span className="feedback-section__count">
                 {feedback.length} comment{feedback.length === 1 ? "" : "s"}
               </span>
             ) : null}
           </div>
 
-          <form onSubmit={submitFeedback} className="mb-8 grid max-w-xl gap-3">
+          <form onSubmit={submitFeedback} className="feedback-form">
             <div className="grid gap-1.5">
               <label htmlFor="feedback-author" className="sr-only">
                 Your name (optional)
@@ -211,7 +213,7 @@ export function ArtifactPageClient({
         </section>
       </main>
 
-      <SiteFooter className="border-border sticky bottom-0 shrink-0 border-t bg-background px-5 py-4 text-center" />
+      <SiteFooter className="border-border shrink-0 border-t bg-background px-5 py-4 text-center" />
     </div>
   );
 }
@@ -236,24 +238,27 @@ function ArtifactToolbar({
   return (
     <header className="artifact-toolbar shrink-0">
       <div className="artifact-toolbar__inner">
-        <div className="artifact-toolbar__title">
-          <span className="truncate font-medium text-foreground" title={artifact.filename}>
-            {artifact.filename}
-          </span>
-          <span aria-hidden className="artifact-toolbar__dot">
-            ·
-          </span>
-          <span className="artifact-kind-badge">{kind}</span>
-          <span className="text-muted-foreground hidden sm:inline tabular-nums">
-            {formatBytes(artifact.size)}
-          </span>
-          <time
-            className="text-muted-foreground hidden md:inline tabular-nums"
-            dateTime={artifact.createdAt}
-            suppressHydrationWarning
-          >
-            {formatRelativeTime(artifact.createdAt)}
-          </time>
+        <div className="artifact-toolbar__lead">
+          <Link href="/" className="artifact-toolbar__wordmark">
+            OpenArtifacts
+          </Link>
+          <span aria-hidden className="artifact-toolbar__sep" />
+          <div className="artifact-toolbar__title">
+            <span className="artifact-toolbar__filename" title={artifact.filename}>
+              {artifact.filename}
+            </span>
+            <span className="artifact-kind-badge">{kind}</span>
+            <span className="artifact-toolbar__meta hidden sm:inline tabular-nums">
+              {formatBytes(artifact.size)}
+            </span>
+            <time
+              className="artifact-toolbar__meta hidden md:inline tabular-nums"
+              dateTime={artifact.createdAt}
+              suppressHydrationWarning
+            >
+              {formatRelativeTime(artifact.createdAt)}
+            </time>
+          </div>
         </div>
         <div className="artifact-toolbar__actions">
           <Button

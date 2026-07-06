@@ -7,7 +7,13 @@ export const GITHUB_URL = "https://github.com/manojbajaj95/openartifacts";
 const linkClass =
   "text-[var(--link)] transition-colors duration-150 hover:underline";
 
-export function SiteFooter({ className }: { className?: string }) {
+export function SiteFooter({
+  className,
+  showTheme = true,
+}: {
+  className?: string;
+  showTheme?: boolean;
+}) {
   return (
     <footer
       className={cn(
@@ -36,10 +42,14 @@ export function SiteFooter({ className }: { className?: string }) {
       <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
         GitHub
       </a>
-      <span className="opacity-40" aria-hidden>
-        ·
-      </span>
-      <ThemeSwitcher />
+      {showTheme ? (
+        <>
+          <span className="opacity-40" aria-hidden>
+            ·
+          </span>
+          <ThemeSwitcher />
+        </>
+      ) : null}
     </footer>
   );
 }
