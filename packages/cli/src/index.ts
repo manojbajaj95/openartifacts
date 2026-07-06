@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { DEFAULT_SERVER_URL, DEFAULT_VIEWER_URL } from "@openartifacts/shared";
-import { configPath, loadConfig, saveConfig } from "./config.js";
+import { type ClientConfig, configPath, loadConfig, saveConfig } from "./config.js";
 import { uploadFile } from "./upload.js";
 
 const program = new Command();
@@ -37,9 +37,10 @@ program
       process.stdout.write(`viewer: ${current.viewerUrl}\n`);
       return;
     }
-    const next = {
+    const next: ClientConfig = {
       serverUrl: opts.server ?? current.serverUrl,
       viewerUrl: opts.viewer ?? current.viewerUrl,
+      selfHosted: true,
     };
     await saveConfig(next);
     process.stdout.write(`Saved config to ${configPath()}\n`);
@@ -51,7 +52,7 @@ program
   .option("--server <url>", "API server URL", DEFAULT_SERVER_URL)
   .option("--viewer <url>", "Viewer URL", DEFAULT_VIEWER_URL)
   .action(async (opts: { server: string; viewer: string }) => {
-    await saveConfig({ serverUrl: opts.server, viewerUrl: opts.viewer });
+    await saveConfig({ serverUrl: opts.server, viewerUrl: opts.viewer, selfHosted: true });
     process.stdout.write(`Created ${configPath()}\n`);
   });
 
