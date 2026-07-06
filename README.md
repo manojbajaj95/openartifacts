@@ -79,7 +79,9 @@ Environment overrides:
 
 ## Self-hosting
 
-1. Deploy `apps/web` (Docker, Vercel, Fly, etc.).
+See **[DEPLOY.md](./DEPLOY.md)** for Vercel + Supabase (recommended) or Docker.
+
+1. Deploy `apps/web` (Vercel, Docker, Fly, etc.).
 2. Create an S3-compatible bucket.
 3. Set environment variables (see `.env.example`).
 4. Point users' CLI at your URL: `openartifacts config --server https://artifacts.example.com`

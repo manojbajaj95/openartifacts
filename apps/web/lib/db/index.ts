@@ -12,6 +12,10 @@ function databaseUrl(): string {
   return url;
 }
 
+function usesPooler(url: string): boolean {
+  return url.includes("6543") || url.includes("pgbouncer=true");
+}
+
 function getDb() {
   const globalForDb = globalThis as typeof globalThis & {
     __oa_pg?: ReturnType<typeof postgres>;
@@ -19,7 +23,14 @@ function getDb() {
   };
 
   if (!globalForDb.__oa_db) {
-    const client = postgres(databaseUrl(), { max: 10 });
+    const url = databaseUrl();
+    const client = postgres(url, {
+      // Serverless: one connection per instance. Pooler handles concurrency.
+      max: process.env.VERCEL ? 1 : 10,
+      prepare: usesPooler(url) ? false : true,
+      idle_timeout: 20,
+      connect_timeout: 10,
+    });
     globalForDb.__oa_pg = client;
     globalForDb.__oa_db = drizzle(client, { schema });
   }

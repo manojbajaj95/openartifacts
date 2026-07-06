@@ -7,6 +7,8 @@ COPY apps/web/package.json apps/web/
 RUN npm install
 
 FROM deps AS build
+ARG DOCKER_BUILD=1
+ENV DOCKER_BUILD=1
 COPY packages ./packages
 COPY apps ./apps
 RUN npm run build -w @openartifacts/shared && npm run build -w @openartifacts/web
