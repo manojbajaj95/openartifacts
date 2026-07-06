@@ -1,0 +1,19 @@
+{
+  "name": "@openartifacts/workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @openartifacts/web",
+    "build": "npm run build -w @openartifacts/shared && npm run build -w openartifacts && npm run build -w @openartifacts/web",
+    "openartifacts": "node packages/cli/dist/index.js",
+    "upload": "node packages/cli/dist/index.js upload",
+    "db:generate": "npm run db:generate -w @openartifacts/web",
+    "db:migrate": "npm run db:migrate -w @openartifacts/web",
+    "db:push": "npm run db:push -w @openartifacts/web",
+    "db:studio": "npm run db:studio -w @openartifacts/web",
+    "publish:cli": "npm run build -w @openartifacts/shared && npm run build -w openartifacts && node scripts/publish-cli.mjs"
+  }
+}

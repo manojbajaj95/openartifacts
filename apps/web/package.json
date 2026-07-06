@@ -1,0 +1,35 @@
+{
+  "name": "@openartifacts/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.826.0",
+    "@aws-sdk/s3-request-presigner": "^3.826.0",
+    "@openartifacts/shared": "*",
+    "drizzle-orm": "^0.44.2",
+    "mermaid": "^11.6.0",
+    "nanoid": "^5.1.5",
+    "next": "^15.3.3",
+    "postgres": "^3.4.7",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "drizzle-kit": "^0.31.1",
+    "typescript": "^5.8.3"
+  }
+}

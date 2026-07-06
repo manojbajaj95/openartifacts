@@ -1,0 +1,39 @@
+{
+  "name": "openartifacts",
+  "version": "0.1.0",
+  "description": "Upload and share artifacts — markdown, images, HTML, mermaid, and more",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbajaj/openartifacts.git",
+    "directory": "packages/cli"
+  },
+  "keywords": ["cli", "upload", "share", "artifacts", "markdown", "mermaid"],
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "bin": {
+    "openartifacts": "bin/openartifacts.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build && chmod +x bin/openartifacts.js dist/index.js"
+  },
+  "dependencies": {
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "@openartifacts/shared": "*",
+    "@types/node": "^22.15.21",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
