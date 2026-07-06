@@ -15,7 +15,7 @@ if (!tarball) {
 }
 
 const tarballPath = join(cliDir, tarball);
-const publishArgs = ["publish", tarballPath, "--access", "public"];
+const publishArgs = ["publish", tarballPath, "--access", "public", "--provenance=false"];
 const otp = process.env.NPM_OTP ?? process.env.NPM_CONFIG_OTP;
 if (otp) publishArgs.push("--otp", otp);
 
