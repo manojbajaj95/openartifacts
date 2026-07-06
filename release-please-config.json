@@ -1,0 +1,11 @@
+{
+  "packages": {
+    "packages/cli": {
+      "release-type": "node",
+      "component": "openartifacts",
+      "changelog-path": "packages/cli/CHANGELOG.md",
+      "include-component-in-tag": true
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}

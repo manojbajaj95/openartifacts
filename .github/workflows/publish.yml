@@ -1,0 +1,39 @@
+name: publish
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    # Only publish when the openartifacts CLI release is published.
+    if: startsWith(github.event.release.tag_name, 'openartifacts-v')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+
+      - name: Upgrade npm
+        run: npm install -g npm@latest
+
+      - run: npm ci
+
+      - name: Build CLI
+        run: npm run build -w @openartifacts/shared && npm run build -w openartifacts
+
+      - name: Publish to npm (trusted publishing)
+        working-directory: packages/cli
+        run: |
+          chmod +x bin/openartifacts.js dist/index.js
+          npm pack
+          npm publish openartifacts-*.tgz --access public
+        env:
+          NPM_CONFIG_PROVENANCE: true
