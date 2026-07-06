@@ -1,34 +1,35 @@
 ---
 name: openartifacts
 description: >-
-  Upload and share files as rendered artifacts with a feedback link. Use when
-  the user wants to share a spec, design doc, diagram, HTML prototype, or image
-  with a person or team; send a review link in Slack, email, or a PR; collect
-  feedback on a deliverable; or asks to use OpenArtifacts, openartifacts, or
-  "share this artifact."
+  Upload a local file as a rendered artifact with a shareable review link, and
+  fetch reviewer comments on it. Use when the user wants to share a spec,
+  design doc, diagram, prototype, or image with a person or team for feedback;
+  send a review link in Slack, email, or a PR; check comments on a shared
+  artifact; or mentions OpenArtifacts or "share this artifact."
 ---
 
 # OpenArtifacts
 
-OpenArtifacts turns a local file into a browser-rendered artifact with a shareable URL and a comment thread. No account required for upload or review.
+OpenArtifacts turns a local file into a browser-rendered artifact with a stable share URL and a comment thread. No account is needed to upload, view, or comment.
 
-**Default host:** `https://oartifacts.vercel.app` (override with config or env vars).
+**Default host:** `https://oartifacts.vercel.app`. Self-hosted and local-dev setups: see [REFERENCE.md](REFERENCE.md).
 
-## When to use
+## Quick start
 
-Use OpenArtifacts when the deliverable is a **file** and the goal is **async review**:
+```bash
+npx openartifacts@latest upload ./design.md
+```
 
-- Share a markdown spec, RFC, or design doc with a teammate
-- Send a mermaid diagram or HTML prototype for feedback
-- Drop a link in Slack, email, or a PR instead of pasting long content
-- Collect comments on work-in-progress without Notion, Figma, or a doc platform
+Output ends with the share link — that is the line to return to the user:
 
-## When not to use
+```
+Uploaded design.md
+kind: markdown
+size: 4.2 KB
 
-- **Secrets or credentials** — never upload `.env`, keys, tokens, or private customer data
-- **Source code review** — use a PR or patch; OpenArtifacts is for rendered deliverables
-- **Live collaboration** — links are read-only views with async comments, not co-editing
-- **Large binaries** — unsupported formats only get a download link; prefer files under ~10 MB
+Share link:
+https://oartifacts.vercel.app/a/abc123xyz
+```
 
 ## Share workflow
 
@@ -36,85 +37,57 @@ Copy this checklist and track progress:
 
 ```
 Share progress:
-- [ ] Confirm the file exists and is safe to share (no secrets)
-- [ ] Upload the file
-- [ ] Give the user the viewer URL
-- [ ] Suggest where to paste it (Slack, email, PR) and what reviewers will see
+- [ ] Confirm the file exists and is safe to share (no secrets, under 10 MB)
+- [ ] Run the upload yourself (don't ask the user to)
+- [ ] Return the share link (the URL after "Share link:")
+- [ ] Tell the user what reviewers will see and how comments work
 ```
 
-### Step 1: Pick the file
-
-Prefer the artifact the user already created or referenced in the conversation — e.g. `design.md`, `architecture.mmd`, `prototype.html`, `screenshot.png`.
-
-If multiple files matter, upload each one separately and return multiple links.
-
-### Step 2: Upload
-
-**End users (any project):**
-
-```bash
-npx openartifacts@latest upload ./path/to/file.md
-```
-
-The command prints one URL on stdout, e.g. `https://oartifacts.vercel.app/a/abc123xyz`. **Return that URL to the user.**
-
-**This monorepo (local dev):**
-
-```bash
-npm run build
-npm run openartifacts -- config --server http://localhost:3000 --viewer http://localhost:3000
-npm run upload -- ./path/to/file.md
-```
-
-**Self-hosted instance:**
-
-```bash
-npx openartifacts@latest config --server https://artifacts.example.com --viewer https://artifacts.example.com
-npx openartifacts@latest upload ./path/to/file.md
-```
-
-Environment overrides (take precedence over config file):
-
-- `OA_SERVER_URL` — API base URL
-- `OA_VIEWER_URL` — URL printed in links
-
-Config file: `~/.config/openartifacts/config.json`
-
-### Step 3: Tell the user what to do with the link
-
-Give them:
-
-1. The **viewer URL** (from upload stdout)
-2. **What renders** — see table below
-3. **Where to paste it** — Slack thread, email, PR comment, Linear ticket, etc.
-4. **How feedback works** — reviewers open the link and leave comments on the page; no login required
+1. **Pick the file.** Prefer the artifact already created or referenced in the conversation. If several files matter, upload each and return one link per file.
+2. **Upload** with the quick-start command. Use descriptive filenames (`checkout-flow-spec.md`) — the filename appears in the viewer header.
+3. **Hand off the link.** Suggest where to paste it (Slack, email, PR, ticket) and note that reviewers open the link and comment on the page with no login.
 
 Example response:
 
-> Uploaded `design.md`. Share this link with your team:
+> Uploaded `design.md`. Share this link for review:
 > https://oartifacts.vercel.app/a/abc123xyz
 >
-> They'll see rendered markdown (including mermaid blocks). Comments go on the artifact page.
+> Reviewers will see rendered markdown (mermaid blocks included) and can leave comments right on the page — no account needed.
 
-## Supported formats
+## Check feedback
+
+The artifact id is the last path segment of the share URL (`/a/<id>`). Fetch comments with:
+
+```bash
+curl -s https://oartifacts.vercel.app/api/artifacts/<id>/feedback
+```
+
+Returns `{"feedback": [{"author", "body", "createdAt", ...}]}` sorted oldest-first. Summarize new comments for the user instead of dumping raw JSON. Posting replies via API: see [REFERENCE.md](REFERENCE.md).
+
+## What renders
 
 | File type | Viewer behavior |
 |-----------|-----------------|
-| `.md` | Markdown (GFM) with fenced mermaid |
+| `.md` | Markdown (GFM) with fenced mermaid blocks |
 | `.mmd`, `.mermaid` | Mermaid diagram |
-| `.html`, `.htm` | Sandboxed iframe preview |
+| `.html` | Sandboxed live preview |
 | Images (png, jpg, gif, webp, svg) | Inline image |
-| `.txt` and other text | Monospace pre block |
+| Code (`.ts`, `.py`, `.go`, `.sql`, …) | Syntax-highlighted source |
+| `.patch`, `.diff` | Rendered diff |
+| `.json`, `.jsonl` | JSON tree / trace viewer |
+| `.txt`, `.log`, `.csv` | Plain text; ANSI logs render as terminal output |
 | Everything else | Download link only |
 
-## Agent tips
+Full list in [REFERENCE.md](REFERENCE.md).
 
-- **Run the upload yourself** — do not tell the user to run the command unless upload fails or they prefer to run it locally.
-- **Prefer links over pasting** — if the artifact is long (spec, doc, diagram), upload and share the URL instead of dumping content into chat.
-- **One link per artifact** — each upload gets a unique `/a/[id]` URL; links are stable and do not expire by default.
-- **Name the file clearly** — the original filename appears in the viewer header; use descriptive names like `checkout-flow-spec.md`.
-- **Check upload errors** — if the server is unreachable, verify config (`npx openartifacts@latest config`) or ask whether they use a self-hosted instance.
+## When not to use
 
-## Optional: web upload
+- **Secrets** — never upload `.env` files, keys, tokens, or private customer data. Skim the file first if unsure.
+- **Source code review** — use a PR or patch workflow; OpenArtifacts is for rendered deliverables.
+- **Live collaboration** — links are read-only views with async comments, not co-editing.
+- **Files over 10 MB** — the server rejects them.
 
-If the user prefers a browser, they can drag-and-drop at the OpenArtifacts home page. Agents should still prefer the CLI — it is scriptable and returns the link directly.
+## Troubleshooting
+
+- **Upload fails / server unreachable** — check active config with `npx openartifacts@latest config`; the user may be on a self-hosted instance ([REFERENCE.md](REFERENCE.md)).
+- **Wrong host in printed link** — `OA_SERVER_URL` / `OA_VIEWER_URL` env vars override config; unset or fix them.
