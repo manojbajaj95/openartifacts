@@ -29,6 +29,20 @@ const MermaidView = dynamic(
   },
 );
 
+const PdfView = dynamic(
+  () => import("./PdfView").then((module) => module.PdfView),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="artifact-skeleton artifact-skeleton--pdf"
+        role="status"
+        aria-label="Loading PDF"
+      />
+    ),
+  },
+);
+
 const SERVER_RENDER_KINDS = new Set(["markdown", "diff", "terminal"]);
 
 export function ArtifactRenderer({
@@ -46,7 +60,7 @@ export function ArtifactRenderer({
   useEffect(() => {
     setText(null);
     setError(null);
-    if (kind === "image" || kind === "binary" || SERVER_RENDER_KINDS.has(kind)) return;
+    if (kind === "image" || kind === "pdf" || kind === "binary" || SERVER_RENDER_KINDS.has(kind)) return;
 
     let cancelled = false;
     (async () => {
@@ -66,6 +80,10 @@ export function ArtifactRenderer({
 
   if (kind === "image") {
     return <ImageView artifact={artifact} contentPath={contentPath} />;
+  }
+
+  if (kind === "pdf") {
+    return <PdfView artifact={artifact} contentPath={contentPath} />;
   }
 
   if (kind === "binary") {
@@ -129,6 +147,17 @@ function ArtifactSkeleton({ kind }: { kind: string }) {
         role="status"
         aria-busy="true"
         aria-label="Loading HTML preview"
+      />
+    );
+  }
+
+  if (kind === "pdf") {
+    return (
+      <div
+        className="artifact-skeleton artifact-skeleton--pdf"
+        role="status"
+        aria-busy="true"
+        aria-label="Loading PDF"
       />
     );
   }

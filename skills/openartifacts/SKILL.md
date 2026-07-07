@@ -72,6 +72,7 @@ Returns `{"feedback": [{"author", "body", "createdAt", ...}]}` sorted oldest-fir
 | `.mmd`, `.mermaid` | Mermaid diagram |
 | `.html` | Sandboxed live preview |
 | Images (png, jpg, gif, webp, svg) | Inline image |
+| `.pdf` | In-browser PDF viewer with page navigation |
 | Code (`.ts`, `.py`, `.go`, `.sql`, …) | Syntax-highlighted source |
 | `.patch`, `.diff` | Rendered diff |
 | `.json`, `.jsonl` | JSON tree / trace viewer |

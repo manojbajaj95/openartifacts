@@ -46,6 +46,7 @@ const EXT_CONTENT_TYPE: Record<string, string> = {
   ".jpeg": "image/jpeg",
   ".gif": "image/gif",
   ".webp": "image/webp",
+  ".pdf": "application/pdf",
 };
 
 const CODE_EXTENSIONS = new Set([
@@ -149,9 +150,16 @@ export function hasAnsiSequences(text: string): boolean {
   return ANSI_PATTERN.test(text);
 }
 
+/** PDF files begin with %PDF- (ISO 32000). */
+export function isPdfBytes(buffer: ArrayBuffer | Uint8Array): boolean {
+  const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+  return bytes.length >= 5 && bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46 && bytes[4] === 0x2d;
+}
+
 export function kindFromContentType(contentType: string): ArtifactKind {
   const ct = contentType.split(";")[0].trim().toLowerCase();
   if (ct.startsWith("image/")) return "image";
+  if (ct === "application/pdf") return "pdf";
   if (ct === "text/html") return "html";
   if (ct === "text/markdown") return "markdown";
   if (ct === "text/vnd.mermaid") return "mermaid";
@@ -233,12 +241,19 @@ function looksLikeTraceDocument(text: string): boolean {
 }
 
 /** Stored kind with filename fallback for legacy uploads misclassified as binary or code. */
-export function effectiveArtifactKind(artifact: { kind: ArtifactKind; filename: string }): ArtifactKind {
+export function effectiveArtifactKind(artifact: {
+  kind: ArtifactKind;
+  filename: string;
+  contentType?: string;
+}): ArtifactKind {
   const fromName = kindFromFilename(artifact.filename);
   if (artifact.kind === "binary") {
-    return fromName === "binary" ? artifact.kind : fromName;
+    if (fromName !== "binary") return fromName;
+    const ct = artifact.contentType?.split(";")[0].trim().toLowerCase();
+    if (ct === "application/pdf") return "pdf";
+    return artifact.kind;
   }
-  if (fromName === "json" || fromName === "trace" || fromName === "diff") {
+  if (fromName === "json" || fromName === "trace" || fromName === "diff" || fromName === "pdf") {
     return fromName;
   }
   return artifact.kind;

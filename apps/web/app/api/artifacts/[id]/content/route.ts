@@ -26,8 +26,11 @@ export async function GET(
   });
 
   const url = new URL(request.url);
-  if (url.searchParams.get("download") === "1") {
+  const forceDownload = url.searchParams.get("download") === "1";
+  if (forceDownload) {
     headers.set("Content-Disposition", `attachment; filename="${safeFilename(row.filename)}"`);
+  } else if (contentType === "application/pdf") {
+    headers.set("Content-Disposition", `inline; filename="${safeFilename(row.filename)}"`);
   }
 
   return new Response(new Uint8Array(body), {

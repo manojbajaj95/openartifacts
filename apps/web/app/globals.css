@@ -1005,10 +1005,15 @@
 }
 
 .artifact-frame--image,
+.artifact-frame--pdf,
 .artifact-frame--mermaid,
 .artifact-frame--binary {
   display: grid;
   place-items: center;
+}
+
+.artifact-frame--pdf {
+  padding: 0.75rem;
 }
 
 .artifact-empty-state {
@@ -1116,6 +1121,84 @@
 .artifact-skeleton--image {
   width: min(100%, 42rem);
   height: min(45vh, 28rem);
+}
+
+.artifact-skeleton--pdf {
+  width: 100%;
+  height: min(70vh, 42rem);
+}
+
+.artifact-pdf-stage {
+  display: grid;
+  gap: 0.75rem;
+  width: min(100%, 52rem);
+}
+
+.artifact-pdf-stage .react-pdf__Document {
+  display: grid;
+  justify-items: center;
+}
+
+.artifact-pdf-stage .react-pdf__Page {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
+}
+
+.artifact-pdf-stage .react-pdf__Page canvas {
+  display: block;
+}
+
+.artifact-pdf-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.artifact-pdf-nav__label {
+  min-width: 7.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.artifact-pdf-nav__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklch, var(--card) 92%, transparent);
+  color: var(--foreground);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.artifact-pdf-nav__button:hover:not(:disabled) {
+  border-color: color-mix(in oklch, var(--border) 70%, var(--foreground));
+  background: color-mix(in oklch, var(--card) 82%, var(--foreground) 8%);
+}
+
+.artifact-pdf-nav__button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 40%, transparent);
+}
+
+.artifact-pdf-nav__button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.artifact-pdf-nav__button svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 @keyframes artifact-shimmer {

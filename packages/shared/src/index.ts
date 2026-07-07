@@ -6,6 +6,7 @@ export type ArtifactKind =
   | "mermaid"
   | "html"
   | "image"
+  | "pdf"
   | "code"
   | "text"
   | "diff"
@@ -47,6 +48,7 @@ export {
   contentTypeFromFilename,
   effectiveArtifactKind,
   hasAnsiSequences,
+  isPdfBytes,
   kindFromContentType,
   kindFromFilename,
   languageFromFilename,

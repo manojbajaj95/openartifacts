@@ -95,6 +95,7 @@ Artifact `kind` is derived from the file extension:
 | mermaid | `.mmd`, `.mermaid` | Rendered diagram |
 | html | `.html`, `.htm` | Sandboxed iframe live preview |
 | image | `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg` | Inline image |
+| pdf | `.pdf` | In-browser PDF viewer with page navigation |
 | code | `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.py`, `.go`, `.rs`, `.rb`, `.java`, `.c`, `.cpp`, `.h`, `.cs`, `.sh`, `.sql`, `.css`, `.scss`, `.yaml`, `.yml`, `.toml`, `.xml`, `.ini`, `Dockerfile` | Syntax highlighting with line numbers |
 | diff | `.patch`, `.diff` | Rendered diff |
 | json | `.json` | Collapsible JSON tree |

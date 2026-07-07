@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { nanoid } from "nanoid";
-import { kindFromContentType, kindFromFilename, refineKindFromText, resolveContentType } from "@openartifacts/shared";
+import { kindFromContentType, kindFromFilename, isPdfBytes, refineKindFromText, resolveContentType } from "@openartifacts/shared";
 import { insertArtifact } from "@/lib/db";
 import { artifactKey, putObject } from "@/lib/s3";
 import { toArtifact } from "@/lib/serialize";
@@ -36,7 +36,10 @@ export async function POST(request: Request) {
     const filenameKind = kindFromFilename(filename);
     const contentKind = kindFromContentType(contentType);
     let kind = filenameKind === "binary" ? contentKind : filenameKind;
-    if (kind !== "binary" && kind !== "image") {
+    if (kind === "binary" && isPdfBytes(buffer)) {
+      kind = "pdf";
+    }
+    if (kind !== "binary" && kind !== "image" && kind !== "pdf") {
       const preview = buffer.toString("utf8", 0, Math.min(buffer.length, 65536));
       kind = refineKindFromText(kind, filename, preview);
     }
